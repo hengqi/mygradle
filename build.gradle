@@ -1,0 +1,93 @@
+group 'com.chenhl'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'org.akhikhl.gretty'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+//    如果使用私服的话，把上面的mavenCentral注释掉，使用下面的私服配置
+//    repositories {
+//        maven {
+//            url 'http://nexus.mycompany.com/nexus/plus'
+//        }
+//    }
+}
+
+
+//sourceSets {
+//    main {
+//        java{
+//            srcDir 'src/main/java'
+//        }
+//        resources {
+//            srcDir 'src/main/resources'
+//        }
+//    }
+//}
+
+buildscript {
+    repositories {
+        mavenCentral()//这里可以使用私服
+    }
+
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
+
+if (!project.plugins.findPlugin(org.akhikhl.gretty.GrettyPlugin))
+    project.apply(plugin: org.akhikhl.gretty.GrettyPlugin)
+
+
+dependencies {
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+//    compile group: 'org.springframework', name: 'spring-context', version: '4.3.12.RELEASE'
+//    compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
+
+    // 上面的语法可简写为下面的
+    testCompile(
+            'junit:junit:4.12'
+    )
+    compile (
+            'org.springframework:spring-context:4.3.12.RELEASE',
+            'joda-time:joda-time:2.9.9'
+    )
+
+    providedCompile (
+            'javax.servlet:javax.servlet-api:3.1.0'
+
+    )
+
+}
+
+// 设置文件编码
+tasks.withType(JavaCompile){
+    options.encoding="UTF-8"
+}
+
+[compileJava, javadoc, compileTestJava]*.options*.encoding="UTF-8"
+
+
+gretty {
+    httpEnabled=true
+    servletContainer = 'tomcat8'
+    contextPath = "/mygradle"
+    host = "localhost"
+    httpPort = 8080
+    scanInterval = 1
+    fastReload = true
+    inplaceMode="soft"
+    loggingLevel = "DEBUG"
+    consoleLogEnabled=true
+
+    debugPort = 6005
+    debugSuspend = true
+
+}
